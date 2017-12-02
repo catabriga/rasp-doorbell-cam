@@ -44,9 +44,9 @@ int main ( int argc,char **argv )
             imgBrightness += data[i];
         }
 
-        cout << "Brightness: " << imgBrightness << endl;
+        //cout << "Brightness: " << imgBrightness << endl;
 
-        if(imgBrightness > 4000)
+        if(imgBrightness > 20 * 1228800)
         {
 	        //save
             std::string filename = std::string("imgs/img")+std::to_string(imgCount)+std::string(".ppm");
