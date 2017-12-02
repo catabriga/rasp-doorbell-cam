@@ -1,9 +1,9 @@
 CC = gcc
 CXX = g++ -std=c++0x
-INCLUDES = -I/usr/local/include -L/opt/vc/lib
+INCLUDES = -I/usr/local/include
 CFLAGS = -c -Wall $(INCLUDES)
 LDFLAGS =
-LIBS = -lraspicam -lmmal -lmmal_core -lmmal_util
+LIBS = -lraspicam -L/opt/vc/lib -lmmal -lmmal_core -lmmal_util
 SOURCES = main.cpp 
 HEADERS = 
 
