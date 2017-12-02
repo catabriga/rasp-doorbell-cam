@@ -49,7 +49,8 @@ int main ( int argc,char **argv )
         if(imgBrightness > 4000)
         {
 	        //save
-	        std::ofstream outFile("imgs/img"+imgCount+".ppm",std::ios::binary);
+            std::string filename = "imgs/img"+imgCount+".ppm";
+	        std::ofstream outFile(filename, std::ios::binary);
 	        outFile << "P6\n" << Camera.getWidth() << " " << Camera.getHeight() << " 255\n";
 	        outFile.write( ( char* ) data, Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB ) );
             imgCount++;
