@@ -54,6 +54,7 @@ int main ( int argc,char **argv )
 	        outFile << "P6\n" << Camera.getWidth() << " " << Camera.getHeight() << " 255\n";
 	        outFile.write( ( char* ) data, Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB ) );
             imgCount++;
+            usleep(500000);
 	        //cout<<"Image saved at raspicam_image.ppm"<<endl;
         }
     }
