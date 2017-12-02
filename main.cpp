@@ -26,8 +26,8 @@ int main ( int argc,char **argv )
 	usleep(3000000);
 
 	//allocate memory
-    int imgSize = Camera.getImageTypeSize(raspicam::RASPICAM_FORMAT_RGB)
-	unsigned char *data=new unsigned char[imgSize];
+    int imgSize = Camera.getImageTypeSize(raspicam::RASPICAM_FORMAT_RGB);
+	unsigned char* data = new unsigned char[imgSize];
 
     int imgCount = 0;
     while(1)
