@@ -1,6 +1,7 @@
 /**
 */
 #include <ctime>
+#include <unistd.h>
 #include <fstream>
 #include <iostream>
 #include <raspicam/raspicam.h>
@@ -13,7 +14,7 @@ int main ( int argc,char **argv ) {
 	if ( !Camera.open()) {cerr<<"Error opening camera"<<endl;return -1;}
 	//wait a while until camera stabilizes
 	cout<<"Sleeping for 3 secs"<<endl;
-	sleep(3);
+	usleep(3000000);
 	//capture
 	Camera.grab();
 	//allocate memory

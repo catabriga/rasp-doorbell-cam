@@ -1,7 +1,7 @@
 CC = gcc
 CXX = g++ -std=c++0x
 INCLUDES = -I/usr/local/include
-CFLAGS = -c -Wall -DUSE_WEBSOCKET -DLINUX $(INCLUDES)
+CFLAGS = -c -Wall $(INCLUDES)
 LDFLAGS =
 LIBS = -lraspicam -lmmal -lmmal_core -lmmal_util
 SOURCES = main.cpp 
