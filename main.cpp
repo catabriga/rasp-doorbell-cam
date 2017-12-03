@@ -4,6 +4,7 @@
 #include <chrono>
 #include <iomanip>
 #include <ctime>
+#include <sstream>
 #include <raspicam/raspicam.h>
 #include <cstdio>
 #include <stdlib.h>
@@ -41,7 +42,7 @@ int main(int argc, char **argv)
         int width = Camera.getWidth();
         int height = Camera.getHeight();
 
-        Magick::Image image(width, height, "RGB", MagickCore::StorageType.CharPixel, data);
+        Magick::Image image(width, height, "RGB", MagickCore::StorageType::CharPixel, data);
 
         long imgBrightness = 0;
         for(int i=0; i<imgSize; i++)
