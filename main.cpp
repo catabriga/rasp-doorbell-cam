@@ -76,14 +76,14 @@ int main(int argc, char **argv)
 
     while(1)
     {
-        std::chrono::steady_clock::time_point t0 = std::chrono::steady_clock::now();
+        //std::chrono::steady_clock::time_point t0 = std::chrono::steady_clock::now();
 
 	    camera.grab();
 
 	    camera.retrieve(data, raspicam::RASPICAM_FORMAT_IGNORE);
         
         long imgBrightness = 0;
-        for(int i=0; i<imgSize; i++)
+        for(int i=0; i<imgSize; i+=10)
         {
             imgBrightness += data[i];
         }
@@ -108,13 +108,13 @@ int main(int argc, char **argv)
                             camera.getImageTypeSize(raspicam::RASPICAM_FORMAT_BGR));            
             ppmImages.push(imageName);
 
-            std::chrono::steady_clock::time_point t5 = std::chrono::steady_clock::now();
+            //std::chrono::steady_clock::time_point t5 = std::chrono::steady_clock::now();
 
-            int dt = std::chrono::duration_cast<std::chrono::microseconds>(t5 - t0).count();
-            if(dt < 500000)
-            {
-                usleep(500000 - dt);	       
-            }
+            //int dt = std::chrono::duration_cast<std::chrono::microseconds>(t5 - t0).count();
+            //if(dt < 500000)
+            //{
+                //usleep(500000 - dt);	       
+            //}
 
         }
     }
