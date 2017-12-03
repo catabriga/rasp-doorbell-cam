@@ -32,7 +32,7 @@ void imgConverter(void)
             image.font("Helvetica");
             image.fillColor(Magick::Color("white"));
             image.strokeColor(Magick::Color("white"));
-            image.fontPointsize(12);
+            image.fontPointsize(24);
             image.draw(Magick::DrawableText(25, 25, imgName.substr(5)));
 
             image.write(imgName+".jpg");
