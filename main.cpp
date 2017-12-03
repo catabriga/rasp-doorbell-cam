@@ -13,7 +13,7 @@
 #include <thread>
 #include <queue>
 
-#define BRIGHTNESS_THRESHOLD 0.2
+#define BRIGHTNESS_THRESHOLD 0.1
 
 std::queue<std::string> ppmImages;
 
@@ -32,7 +32,7 @@ void imgConverter(void)
             image.font("Helvetica");
             image.fillColor(Magick::Color("white"));
             image.strokeColor(Magick::Color("black"));
-            image.draw(Magick::DrawableText(0, 0, imgName));
+            image.draw(Magick::DrawableText(25, 25, imgName));
 
             image.write(imgName+".jpg");
             remove((imgName+".ppm").c_str());
@@ -88,7 +88,7 @@ int main(int argc, char **argv)
         }
 
         double brightRatio = ((double)imgBrightness) / (width * height * 255);
-        printf("%f\n", brightRatio);
+        //printf("%f\n", brightRatio);
         if(brightRatio > BRIGHTNESS_THRESHOLD)
         {
             auto now = std::chrono::system_clock::now();
