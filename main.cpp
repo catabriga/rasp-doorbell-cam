@@ -11,7 +11,7 @@
 #include <Magick++.h>
 #include <thread>
 
-#define NUM_IMAGES 20
+#define NUM_IMAGES 200
 
 Magick::Image images[NUM_IMAGES];
 std::string imageNames[NUM_IMAGES];
