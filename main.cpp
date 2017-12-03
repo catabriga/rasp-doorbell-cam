@@ -4,7 +4,7 @@
 #include <chrono>
 #include <ctime>
 #include <raspicam/raspicam.h>
-#include <cstdio.h>
+#include <cstdio>
 #include <stdlib.h>
 #include <Magick++.h>
  
