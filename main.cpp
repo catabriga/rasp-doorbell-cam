@@ -82,13 +82,14 @@ int main(int argc, char **argv)
 
 	    camera.retrieve(data, raspicam::RASPICAM_FORMAT_IGNORE);
         
+        int sampleFactor = 10;
         long imgBrightness = 0;
-        for(int i=0; i<imgSize; i+=10)
+        for(int i=0; i<imgSize; i+=sampleFactor)
         {
             imgBrightness += data[i];
         }
 
-        double brightRatio = ((double)imgBrightness) / (width * height * 255);
+        double brightRatio = ((double)imgBrightness * sampleFactor) / (width * height * 255);
         //printf("%f\n", brightRatio);
         if(brightRatio > BRIGHTNESS_THRESHOLD)
         {
