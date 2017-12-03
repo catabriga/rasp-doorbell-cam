@@ -21,11 +21,10 @@ void imgConverter(void)
         if(!ppmImages.empty())
         {
             std::string imgName = ppmImages.pop();
-            image.read(imgName);
-
+            
             Magick::Image image(imgName+".ppm");
             image.write(imgName+".jpg");
-            remove(imgName+".ppm");
+            remove((imgName+".ppm").c_str());
         }
         else
         {
@@ -69,9 +68,7 @@ int main(int argc, char **argv)
         std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
 
 	    camera.retrieve(data, raspicam::RASPICAM_FORMAT_IGNORE);
-        int width = camera.getWidth();
-        int height = camera.getHeight();
-
+        
         std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
 
         std::chrono::steady_clock::time_point t3 = std::chrono::steady_clock::now();
@@ -96,8 +93,10 @@ int main(int argc, char **argv)
             ss << '.' << std::setfill('0') << std::setw(3) << ms.count();
             std::string imageName = "imgs/"+ss.str();
             
+            int width = camera.getWidth();
+            int height = camera.getHeight();
             std::ofstream outFile(imageName+".ppm", std::ios::binary);
- 	        outFile << "P6\n" << Camera.getWidth() << " " << Camera.getHeight() << " 255\n";
+ 	        outFile << "P6\n" << width << " " << height << " 255\n";
  	        outFile.write(  (char*)data, 
                             Camera.getImageTypeSize(raspicam::RASPICAM_FORMAT_RGB));            
             ppmImages.push(imageName);
