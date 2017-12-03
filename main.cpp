@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <ctime>
 #include <sstream>
+#include <fstream>
 #include <raspicam/raspicam.h>
 #include <cstdio>
 #include <stdlib.h>
@@ -92,11 +93,11 @@ int main(int argc, char **argv)
             std::stringstream ss;
             ss << std::put_time(std::localtime(&time_t_now), "%Y-%m-%d-%T");
             ss << '.' << std::setfill('0') << std::setw(3) << ms.count();
-            std::string imageName = "imgs/"+ss.str();
-            
-            int width = camera.getWidth();
-            int height = camera.getHeight();
+            std::string imageName = "imgs/"+ss.str();       
             std::ofstream outFile(imageName+".ppm", std::ios::binary);
+
+            int width = camera.getWidth();
+            int height = camera.getHeight();            
  	        outFile << "P6\n" << width << " " << height << " 255\n";
  	        outFile.write(  (char*)data, 
                             camera.getImageTypeSize(raspicam::RASPICAM_FORMAT_BGR));            
