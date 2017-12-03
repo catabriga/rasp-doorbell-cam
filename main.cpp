@@ -13,11 +13,13 @@
 int main(int argc, char **argv) 
 {
     Magick::InitializeMagick(*argv);
-	raspicam::RaspiCam Camera; //Camera object
+	raspicam::RaspiCam camera; //Camera object
+
+    camera.setFormat(raspicam::RASPICAM_FORMAT_BGR);
 
 	//Open camera 
 	printf("Opening Camera...\n");
-	if(!Camera.open()) 
+	if(!camera.open()) 
     {
         printf("Error opening camera\n");
         return -1;
@@ -28,21 +30,19 @@ int main(int argc, char **argv)
 	usleep(3000000);
 
 	//allocate memory
-    int imgSize = Camera.getImageTypeSize(raspicam::RASPICAM_FORMAT_RGB);
+    int imgSize = camera.getImageTypeSize(raspicam::RASPICAM_FORMAT_BGR);
 	unsigned char* data = new unsigned char[imgSize];
 
     int imgCount = 0;
     while(1)
     {
-	    //capture
-	    Camera.grab();
+	    camera.grab();
 
-	    //extract the image in rgb format
-	    Camera.retrieve(data, raspicam::RASPICAM_FORMAT_RGB );//get camera image
-        int width = Camera.getWidth();
-        int height = Camera.getHeight();
+	    camera.retrieve(data, raspicam::RASPICAM_FORMAT_IGNORE);
+        int width = camera.getWidth();
+        int height = camera.getHeight();
 
-        Magick::Image image(width, height, "RGB", MagickCore::StorageType::CharPixel, data);
+        Magick::Image image(width, height, "BGR", MagickCore::StorageType::CharPixel, data);
 
         long imgBrightness = 0;
         for(int i=0; i<imgSize; i++)
