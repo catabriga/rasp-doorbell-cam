@@ -54,7 +54,7 @@ int main(int argc, char **argv)
         {
             auto now = std::chrono::system_clock::now();
             auto time_t_now = std::chrono::system_clock::to_time_t(now);
-            auto ms = duration_cast<milliseconds>(now.time_since_epoch()) % 1000;
+            auto ms = std::chrono::duration_cast<milliseconds>(now.time_since_epoch()) % 1000;
             std::stringstream ss;
             ss << std::put_time(std::localtime(&time_t_now), "%Y-%m-%d-%T");
             ss << '.' << std::setfill('0') << std::setw(3) << ms.count();
