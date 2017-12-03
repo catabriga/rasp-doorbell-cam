@@ -36,19 +36,29 @@ int main(int argc, char **argv)
     int imgCount = 0;
     while(1)
     {
+        std::chrono::steady_clock::time_point t0 = std::chrono::steady_clock::now();
+
 	    camera.grab();
+
+        std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
 
 	    camera.retrieve(data, raspicam::RASPICAM_FORMAT_IGNORE);
         int width = camera.getWidth();
         int height = camera.getHeight();
 
+        std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
+
         Magick::Image image(width, height, "BGR", MagickCore::StorageType::CharPixel, data);
+
+        std::chrono::steady_clock::time_point t3 = std::chrono::steady_clock::now();
 
         long imgBrightness = 0;
         for(int i=0; i<imgSize; i++)
         {
             imgBrightness += data[i];
         }
+
+        std::chrono::steady_clock::time_point t4 = std::chrono::steady_clock::now();
 
         if(imgBrightness > 20 * 1228800)
         {
@@ -61,6 +71,16 @@ int main(int argc, char **argv)
             ss << std::put_time(std::localtime(&time_t_now), "%Y-%m-%d-%T");
             ss << '.' << std::setfill('0') << std::setw(3) << ms.count();
             image.write("imgs/"+ss.str()+".jpg");
+
+            std::chrono::steady_clock::time_point t5 = std::chrono::steady_clock::now();
+
+            int dt1 = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
+            int dt2 = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+            int dt3 = std::chrono::duration_cast<std::chrono::microseconds>(t3 - t2).count();
+            int dt4 = std::chrono::duration_cast<std::chrono::microseconds>(t4 - t3).count();
+            int dt5 = std::chrono::duration_cast<std::chrono::microseconds>(t5 - t4).count();
+
+            printf("%d %d %d %d %d\n", dt1, dt2, dt3, dt4, dt5);
 
 	        imgCount++;
             usleep(500000);	       
