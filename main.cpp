@@ -32,7 +32,8 @@ void imgConverter(void)
             image.font("Helvetica");
             image.fillColor(Magick::Color("white"));
             image.strokeColor(Magick::Color("white"));
-            image.draw(Magick::DrawableText(25, 25, imgName));
+            image.fontPointsize(12);
+            image.draw(Magick::DrawableText(25, 25, imgName.substr(5)));
 
             image.write(imgName+".jpg");
             remove((imgName+".ppm").c_str());
