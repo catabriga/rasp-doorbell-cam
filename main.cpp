@@ -26,6 +26,7 @@ void imgWriter(void)
         {
             images[lastImage].write(imageNames[lastImage]);
             lastImage = (lastImage+1) % NUM_IMAGES;
+            printf("%d\n", lastImage);
         }
         else
         {
@@ -108,7 +109,7 @@ int main(int argc, char **argv)
             int dt3 = std::chrono::duration_cast<std::chrono::microseconds>(t3 - t2).count();
             int dt4 = std::chrono::duration_cast<std::chrono::microseconds>(t4 - t3).count();
             int dt5 = std::chrono::duration_cast<std::chrono::microseconds>(t5 - t4).count();
-            printf("%d %d %d %d %d\n", dt1, dt2, dt3, dt4, dt5);
+            printf("%d -> %d %d %d %d %d\n", currentImage, dt1, dt2, dt3, dt4, dt5);
 
             int dt = std::chrono::duration_cast<std::chrono::microseconds>(t5 - t0).count();
             if(dt < 500000)
