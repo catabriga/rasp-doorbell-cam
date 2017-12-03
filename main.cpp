@@ -56,7 +56,7 @@ int main(int argc, char **argv)
             auto time_t_now = std::chrono::system_clock::to_time_t(now);
             std::stringstream ss;
             ss << std::put_time(std::localtime(&time_t_now), "%Y-%m-%d %X");
-            image.write(ss.str());
+            image.write("imgs/"+ss.str()+".jpg");
 
 	        imgCount++;
             usleep(500000);	       
