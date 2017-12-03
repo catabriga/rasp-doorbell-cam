@@ -7,11 +7,13 @@
 #include <raspicam/raspicam.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <Magick++.h>
 
 using namespace std;
  
 int main ( int argc,char **argv ) 
 {
+    InitializeMagick(*argv);
 	raspicam::RaspiCam Camera; //Camera object
 
 	//Open camera 
