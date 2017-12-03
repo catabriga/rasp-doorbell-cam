@@ -13,7 +13,7 @@ using namespace std;
  
 int main ( int argc,char **argv ) 
 {
-    InitializeMagick("");
+    Magick::InitializeMagick(*argv);
 	raspicam::RaspiCam Camera; //Camera object
 
 	//Open camera 
