@@ -11,22 +11,20 @@
 #include <Magick++.h>
 #include <thread>
 
-#define NUM_IMAGES 200
+std::queue<std::string> ppmImages;
 
-Magick::Image images[NUM_IMAGES];
-std::string imageNames[NUM_IMAGES];
-int currentImage = 0;
-
-void imgWriter(void)
+void imgConverter(void)
 {
-    int lastImage = 0;
     while(1)
     {
-        if(lastImage != currentImage)
+        if(!ppmImages.empty())
         {
-            images[lastImage].write(imageNames[lastImage]);
-            lastImage = (lastImage+1) % NUM_IMAGES;
-            printf("%d\n", lastImage);
+            std::string imgName = ppmImages.pop();
+            image.read(imgName);
+
+            Magick::Image image(imgName+".ppm");
+            image.write(imgName+".jpg");
+            remove(imgName+".ppm");
         }
         else
         {
@@ -39,7 +37,7 @@ int main(int argc, char **argv)
 {
     Magick::InitializeMagick(*argv);
     
-    std::thread imgWriterThread(imgWriter);
+    std::thread imgConverterThread(imgConverter);
 
 	raspicam::RaspiCam camera; //Camera object
 
@@ -75,8 +73,6 @@ int main(int argc, char **argv)
 
         std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
 
-        Magick::Image image(width, height, "BGR", MagickCore::StorageType::CharPixel, data);
-        
         std::chrono::steady_clock::time_point t3 = std::chrono::steady_clock::now();
 
         long imgBrightness = 0;
@@ -89,8 +85,6 @@ int main(int argc, char **argv)
 
         if(imgBrightness > 20 * 1228800)
         {
-            images[currentImage] = image;
-
             auto now = std::chrono::system_clock::now();
             auto time_t_now = std::chrono::system_clock::to_time_t(now);
             auto ms = std::chrono::duration_cast<std::chrono::milliseconds>
@@ -99,8 +93,13 @@ int main(int argc, char **argv)
             std::stringstream ss;
             ss << std::put_time(std::localtime(&time_t_now), "%Y-%m-%d-%T");
             ss << '.' << std::setfill('0') << std::setw(3) << ms.count();
-            imageNames[currentImage] = "imgs/"+ss.str()+".jpg";
-            currentImage = (currentImage+1) % NUM_IMAGES;
+            std::string imageName = "imgs/"+ss.str();
+            
+            std::ofstream outFile(imageName+".ppm", std::ios::binary);
+ 	        outFile << "P6\n" << Camera.getWidth() << " " << Camera.getHeight() << " 255\n";
+ 	        outFile.write(  (char*)data, 
+                            Camera.getImageTypeSize(raspicam::RASPICAM_FORMAT_RGB));            
+            ppmImages.push(imageName);
 
             std::chrono::steady_clock::time_point t5 = std::chrono::steady_clock::now();
 
@@ -120,7 +119,7 @@ int main(int argc, char **argv)
         }
     }
 
-    imgWriterThread.join();
+    imgConverterThread.join();
 
 	//free resrources    
 	delete data;
