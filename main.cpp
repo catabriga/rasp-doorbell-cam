@@ -1,30 +1,28 @@
 /**
 */
-#include <ctime>
 #include <unistd.h>
-#include <fstream>
-#include <iostream>
+#include <chrono>
+#include <ctime>
 #include <raspicam/raspicam.h>
-#include <stdio.h>
+#include <cstdio.h>
 #include <stdlib.h>
 #include <Magick++.h>
-
-using namespace std;
  
-int main ( int argc,char **argv ) 
+int main(int argc, char **argv) 
 {
     Magick::InitializeMagick(*argv);
 	raspicam::RaspiCam Camera; //Camera object
 
 	//Open camera 
-	cout<<"Opening Camera..."<<endl;
-	if ( !Camera.open()) 
+	printf("Opening Camera...\n");
+	if(!Camera.open()) 
     {
-        cerr<<"Error opening camera"<<endl;return -1;
+        printf("Error opening camera\n");
+        return -1;
     }
 
 	//wait a while until camera stabilizes
-	cout<<"Sleeping for 3 secs"<<endl;
+	printf("Sleeping for 3 secs\n");
 	usleep(3000000);
 
 	//allocate memory
@@ -38,7 +36,11 @@ int main ( int argc,char **argv )
 	    Camera.grab();
 
 	    //extract the image in rgb format
-	    Camera.retrieve ( data,raspicam::RASPICAM_FORMAT_RGB );//get camera image
+	    Camera.retrieve(data, raspicam::RASPICAM_FORMAT_RGB );//get camera image
+        int width = Camera.getWidth();
+        int height = Camera.getHeight();
+
+        Magick::Image image(width, height, "RGB", 0, data);
 
         long imgBrightness = 0;
         for(int i=0; i<imgSize; i++)
@@ -46,18 +48,16 @@ int main ( int argc,char **argv )
             imgBrightness += data[i];
         }
 
-        //cout << "Brightness: " << imgBrightness << endl;
-
         if(imgBrightness > 20 * 1228800)
         {
-	        //save
-            std::string filename = std::string("imgs/img")+std::to_string(imgCount)+std::string(".ppm");
-	        std::ofstream outFile(filename, std::ios::binary);
-	        outFile << "P6\n" << Camera.getWidth() << " " << Camera.getHeight() << " 255\n";
-	        outFile.write( ( char* ) data, Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB ) );
-            imgCount++;
-            usleep(500000);
-	        //cout<<"Image saved at raspicam_image.ppm"<<endl;
+            auto now = std::chrono::system_clock::now();
+            auto time_t_now = std::chrono::system_clock::to_time_t(now);
+            std::stringstream ss;
+            ss << std::put_time(std::localtime(&time_t_now), "%Y-%m-%d %X");
+            image.write(ss.str());
+
+	        imgCount++;
+            usleep(500000);	       
         }
     }
 
