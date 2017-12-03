@@ -31,7 +31,7 @@ void imgConverter(void)
             image.rotate(90);
             image.font("Helvetica");
             image.fillColor(Magick::Color("white"));
-            image.strokeColor(Magick::Color("black"));
+            image.strokeColor(Magick::Color("white"));
             image.draw(Magick::DrawableText(25, 25, imgName));
 
             image.write(imgName+".jpg");
