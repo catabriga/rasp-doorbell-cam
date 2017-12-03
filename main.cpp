@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <Magick++.h>
 #include <thread>
+#include <queue>
 
 std::queue<std::string> ppmImages;
 
