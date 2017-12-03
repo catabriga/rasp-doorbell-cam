@@ -9,10 +9,37 @@
 #include <cstdio>
 #include <stdlib.h>
 #include <Magick++.h>
- 
+#include <thread>
+
+#define NUM_IMAGES 20
+
+Magick::Image images[NUM_IMAGES];
+std::string imageNames[NUM_IMAGES];
+int currentImage = 0;
+
+void imgWriter(void)
+{
+    int lastImage = 0;
+    while(1)
+    {
+        if(lastImage != currentImage)
+        {
+            images[lastImage].write(imageNames[lastImage]);
+            lastImage = (lastImage+1) % NUM_IMAGES;
+        }
+        else
+        {
+            usleep(100000);
+        }        
+    }
+}
+
 int main(int argc, char **argv) 
 {
     Magick::InitializeMagick(*argv);
+    
+    std::thread imgWriterThread(imgWriter);
+
 	raspicam::RaspiCam camera; //Camera object
 
     camera.setFormat(raspicam::RASPICAM_FORMAT_BGR);
@@ -33,7 +60,6 @@ int main(int argc, char **argv)
     int imgSize = camera.getImageTypeSize(raspicam::RASPICAM_FORMAT_BGR);
 	unsigned char* data = new unsigned char[imgSize];
 
-    int imgCount = 0;
     while(1)
     {
         std::chrono::steady_clock::time_point t0 = std::chrono::steady_clock::now();
@@ -49,7 +75,7 @@ int main(int argc, char **argv)
         std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
 
         Magick::Image image(width, height, "BGR", MagickCore::StorageType::CharPixel, data);
-
+        
         std::chrono::steady_clock::time_point t3 = std::chrono::steady_clock::now();
 
         long imgBrightness = 0;
@@ -62,6 +88,8 @@ int main(int argc, char **argv)
 
         if(imgBrightness > 20 * 1228800)
         {
+            images[currentImage] = image;
+
             auto now = std::chrono::system_clock::now();
             auto time_t_now = std::chrono::system_clock::to_time_t(now);
             auto ms = std::chrono::duration_cast<std::chrono::milliseconds>
@@ -70,7 +98,8 @@ int main(int argc, char **argv)
             std::stringstream ss;
             ss << std::put_time(std::localtime(&time_t_now), "%Y-%m-%d-%T");
             ss << '.' << std::setfill('0') << std::setw(3) << ms.count();
-            image.write("imgs/"+ss.str()+".jpg");
+            imageNames[currentImage] = "imgs/"+ss.str()+".jpg";
+            currentImage = (currentImage+1) % NUM_IMAGES;
 
             std::chrono::steady_clock::time_point t5 = std::chrono::steady_clock::now();
 
@@ -79,13 +108,18 @@ int main(int argc, char **argv)
             int dt3 = std::chrono::duration_cast<std::chrono::microseconds>(t3 - t2).count();
             int dt4 = std::chrono::duration_cast<std::chrono::microseconds>(t4 - t3).count();
             int dt5 = std::chrono::duration_cast<std::chrono::microseconds>(t5 - t4).count();
-
             printf("%d %d %d %d %d\n", dt1, dt2, dt3, dt4, dt5);
 
-	        imgCount++;
-            usleep(500000);	       
+            int dt = std::chrono::duration_cast<std::chrono::microseconds>(t5 - t0).count();
+            if(dt < 500000)
+            {
+                usleep(500000 - dt);	       
+            }
+
         }
     }
+
+    imgWriterThread.join();
 
 	//free resrources    
 	delete data;
