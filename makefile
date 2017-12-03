@@ -3,7 +3,7 @@ CXX = g++ -std=c++0x
 INCLUDES = -I/usr/local/include
 CFLAGS = -c -Wall `Magick++-config --cppflags --cxxflags` $(INCLUDES)
 LDFLAGS =
-LIBS = -lraspicam -L/opt/vc/lib -lmmal -lmmal_core -lmmal_util `Magick++-config --ldflags --libs`
+LIBS = -lraspicam -L/opt/vc/lib -lmmal -lmmal_core -lmmal_util -pthread `Magick++-config --ldflags --libs`
 SOURCES = main.cpp 
 HEADERS = 
 
