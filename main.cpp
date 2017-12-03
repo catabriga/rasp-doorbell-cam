@@ -20,7 +20,8 @@ void imgConverter(void)
     {
         if(!ppmImages.empty())
         {
-            std::string imgName = ppmImages.pop();
+            std::string imgName = ppmImages.front();
+            ppmImages.pop();
             
             Magick::Image image(imgName+".ppm");
             image.write(imgName+".jpg");
@@ -98,7 +99,7 @@ int main(int argc, char **argv)
             std::ofstream outFile(imageName+".ppm", std::ios::binary);
  	        outFile << "P6\n" << width << " " << height << " 255\n";
  	        outFile.write(  (char*)data, 
-                            Camera.getImageTypeSize(raspicam::RASPICAM_FORMAT_RGB));            
+                            camera.getImageTypeSize(raspicam::RASPICAM_FORMAT_BGR));            
             ppmImages.push(imageName);
 
             std::chrono::steady_clock::time_point t5 = std::chrono::steady_clock::now();
@@ -108,7 +109,7 @@ int main(int argc, char **argv)
             int dt3 = std::chrono::duration_cast<std::chrono::microseconds>(t3 - t2).count();
             int dt4 = std::chrono::duration_cast<std::chrono::microseconds>(t4 - t3).count();
             int dt5 = std::chrono::duration_cast<std::chrono::microseconds>(t5 - t4).count();
-            printf("%d -> %d %d %d %d %d\n", currentImage, dt1, dt2, dt3, dt4, dt5);
+            printf("%d %d %d %d %d\n", dt1, dt2, dt3, dt4, dt5);
 
             int dt = std::chrono::duration_cast<std::chrono::microseconds>(t5 - t0).count();
             if(dt < 500000)
