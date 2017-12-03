@@ -30,8 +30,8 @@ void imgConverter(void)
          
             image.rotate(90);
             image.font("Helvetica");
-            image.fillColor(Color("white"));
-            image.strokeColor(Color("black"));
+            image.fillColor(Magick::Color("white"));
+            image.strokeColor(Magick::Color("black"));
             image.draw(Magick::DrawableText(0, 0, imgName));
 
             image.write(imgName+".jpg");
@@ -88,7 +88,7 @@ int main(int argc, char **argv)
         }
 
         double brightRatio = ((double)imgBrightness) / (width * height * 255);
-        print("%f\n", brightRatio);
+        printf("%f\n", brightRatio);
         if(brightRatio > BRIGHTNESS_THRESHOLD)
         {
             auto now = std::chrono::system_clock::now();
