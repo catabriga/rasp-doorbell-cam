@@ -9,10 +9,11 @@
 #include <stdlib.h>
 #include <Magick++.h>
 
+using namespace std;
  
 int main ( int argc,char **argv ) 
 {
-    InitializeMagick(*argv);
+    InitializeMagick("");
 	raspicam::RaspiCam Camera; //Camera object
 
 	//Open camera 
