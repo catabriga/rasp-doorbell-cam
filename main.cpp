@@ -13,6 +13,8 @@
 #include <thread>
 #include <queue>
 
+#define BRIGHTNESS_THRESHOLD 0.2
+
 std::queue<std::string> ppmImages;
 
 void imgConverter(void)
@@ -25,6 +27,13 @@ void imgConverter(void)
             ppmImages.pop();
             
             Magick::Image image(imgName+".ppm");
+         
+            image.rotate(90);
+            image.font("Helvetica");
+            image.fillColor(Color("white"));
+            image.strokeColor(Color("black"));
+            image.draw(Magick::DrawableText(0, 0, imgName));
+
             image.write(imgName+".jpg");
             remove((imgName+".ppm").c_str());
         }
@@ -60,6 +69,9 @@ int main(int argc, char **argv)
 	//allocate memory
     int imgSize = camera.getImageTypeSize(raspicam::RASPICAM_FORMAT_BGR);
 	unsigned char* data = new unsigned char[imgSize];
+    int width = camera.getWidth();
+    int height = camera.getHeight();            
+ 	        
 
     while(1)
     {
@@ -67,23 +79,17 @@ int main(int argc, char **argv)
 
 	    camera.grab();
 
-        std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
-
 	    camera.retrieve(data, raspicam::RASPICAM_FORMAT_IGNORE);
         
-        std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
-
-        std::chrono::steady_clock::time_point t3 = std::chrono::steady_clock::now();
-
         long imgBrightness = 0;
         for(int i=0; i<imgSize; i++)
         {
             imgBrightness += data[i];
         }
 
-        std::chrono::steady_clock::time_point t4 = std::chrono::steady_clock::now();
-
-        if(imgBrightness > 20 * 1228800)
+        double brightRatio = ((double)imgBrightness) / (width * height * 255);
+        print("%f\n", brightRatio);
+        if(brightRatio > BRIGHTNESS_THRESHOLD)
         {
             auto now = std::chrono::system_clock::now();
             auto time_t_now = std::chrono::system_clock::to_time_t(now);
@@ -96,21 +102,12 @@ int main(int argc, char **argv)
             std::string imageName = "imgs/"+ss.str();       
             std::ofstream outFile(imageName+".ppm", std::ios::binary);
 
-            int width = camera.getWidth();
-            int height = camera.getHeight();            
- 	        outFile << "P6\n" << width << " " << height << " 255\n";
+            outFile << "P6\n" << width << " " << height << " 255\n";
  	        outFile.write(  (char*)data, 
                             camera.getImageTypeSize(raspicam::RASPICAM_FORMAT_BGR));            
             ppmImages.push(imageName);
 
             std::chrono::steady_clock::time_point t5 = std::chrono::steady_clock::now();
-
-            int dt1 = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
-            int dt2 = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-            int dt3 = std::chrono::duration_cast<std::chrono::microseconds>(t3 - t2).count();
-            int dt4 = std::chrono::duration_cast<std::chrono::microseconds>(t4 - t3).count();
-            int dt5 = std::chrono::duration_cast<std::chrono::microseconds>(t5 - t4).count();
-            printf("%d %d %d %d %d\n", dt1, dt2, dt3, dt4, dt5);
 
             int dt = std::chrono::duration_cast<std::chrono::microseconds>(t5 - t0).count();
             if(dt < 500000)
